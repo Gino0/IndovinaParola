@@ -4,6 +4,9 @@
  */
 package servertcp;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -23,6 +26,7 @@ public class ServerTCP {
     static int numOfUsers = 0;
     static List<ClientHandler> clients;
     ServerSocket serversocket;
+    public static String p="";
 
     public ServerTCP() throws IOException {
         clients = new ArrayList<>();
@@ -35,10 +39,13 @@ public class ServerTCP {
         ServerTCP server = new ServerTCP();
         // aseptto le connessioni dei clients
         server.waitConnection();
+       
     }
 
     private void waitConnection() throws IOException {
         log("server running...");
+         p=EstraiParola();
+        System.out.println(p);
         while (true) {
             socket = serversocket.accept();
             log("Client accepted: " + socket.getInetAddress());
@@ -63,7 +70,26 @@ public class ServerTCP {
     public static List<ClientHandler> getClients(){
         return clients;
     }
+
     
+    private static String EstraiParola(){
+        String path="src\\servertcp\\parole.txt";
+        File file = new File(path);
+        List<String> nome=new ArrayList();
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(file)))
+        {
+            String line;
+
+            while ((line = br.readLine()) != null) {            
+               nome.add(line.trim());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        int num=(int)(Math.random()*(nome.size()));
+        return nome.get(num);
+    }
 //    public String attivi(){
 //        String tmp="utenti attivi:\n";
 //        for (int i = 0; i < clients.size(); i++) {

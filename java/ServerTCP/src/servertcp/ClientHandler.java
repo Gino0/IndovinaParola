@@ -57,7 +57,19 @@ public class ClientHandler implements Runnable {
                 closeStream();
                 break;
             }
-            forwardToClient(ricevuti);
+            else{
+                
+                ricevuti="la parola è lunga ";
+                forwardToClient(ricevuti);
+                //String indo = ControllaParola(p,ricevuti);
+//                
+//                if(ControllaVinto(indo,p)==true)
+//                {
+//                    ricevuti="hai vinto";
+//                    forwardToClient(ricevuti);
+//                }
+            }
+            
         }   
         closeStream();
     }
@@ -100,12 +112,12 @@ public class ClientHandler implements Runnable {
         for(ClientHandler c : ServerTCP.getClients()){
 //            if(c.isLoggedIn && c.name.equals(recipient)){
                 
-                if(message.equals())
-                {
+//                if(message.equals())
+//                {
                     write(c.output,message);
                     log(name + " --> "+ message);
                     break;
-                }
+//                }
                 
 //            }
         }
@@ -124,40 +136,31 @@ public class ClientHandler implements Runnable {
         System.out.println(msg);
     }
     
-    private int generaNumero(){
-        int i=0;
-        //int max= LUNGHEZZA FILE CON PAROLE
-        int min=0;
-        //int range=max-min+1;
-        //i=(int)(Math.random() * range) + min;
-        return i;
+    
+    
+    private String ControllaParola(String p,String msg){
+        String indovinata="";
+        for(int i=0;i<p.length();i++){
+            if(p.charAt(i)==msg.charAt(i)){
+                indovinata+=msg.charAt(i);
+            }
+            else{
+                indovinata+="*";
+            }
+        }
+        
+        return indovinata;
     }
     
-    private String EstraiParola(){
-        int size=0;
-        String path="./parole.txt";
-        File file = new File(path);
-        String[] vett = new String[size];
-        int x=generaNumero();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(file)))
-        {
-            String line;
-            int c=0;
-            while ((line = br.readLine()) != null) {
-//                for (int i = 0; i < parola.length(); i++) {
-////                    chars[i]=parola.charAt(i);
-//                }
-//                System.out.println(Arrays.toString(chars));//ho ggiunto l'import "arrays
-                if(c==x){
-                    return line.trim();
-                }
-                c++;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    public Boolean ControllaVinto(String indo,String p){
+        boolean check=false;
+        if(indo==p){
+            check=true;
+            return check;
+        }else{
+            
+         return check;   
         }
-        return null;
     }
     
 }
