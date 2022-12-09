@@ -39,7 +39,7 @@ public class ServerTCP {
         // faccio partire il server
         ServerTCP server = new ServerTCP();
         // aseptto le connessioni dei clients
-        server.waitConnection();      
+        server.waitConnection(); 
     }
 
     private void waitConnection() throws IOException {

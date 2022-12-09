@@ -50,25 +50,30 @@ public class ClientHandler implements Runnable {
     public void run() {
         String ricevuti;
         write(output, "your name: " + name+"\n");
-        forwardToClient("la_parola_e'_lunga"+s.getP().length());
+        broadcastClient("la_parola_e'_lunga_"+s.getP().length());
         while (true) {
             ricevuti = read();
-            if(ricevuti.equals("EXIT")){
+            if(ricevuti.equals("EXIT") || ricevuti.equals("exit")){
                 s.rimuoviClient(this);
                 forwardToClient("DISCONNECTED");
                 return;
             }
-            parolacontrollata=ControllaParola(s.getP(),ricevuti);
-            forwardToClient(parolacontrollata);
-            //System.out.println("PAROLA CONTROLLATA = " + parolacontrollata);
-            if(ControllaVinto(parolacontrollata,s.getP())) {
+            if(ricevuti.equals("jolly"))
+            {
+                forwardToClient("Il_tuo_gioco_finisce_qui_la_parola_era:"+s.getP());
+            }else{
+                 parolacontrollata=ControllaParola(s.getP(),ricevuti);
+                forwardToClient(parolacontrollata);
+                //System.out.println("PAROLA CONTROLLATA = " + parolacontrollata);
+                if(ControllaVinto(parolacontrollata,s.getP())) {
                 broadcastClient(name + "_ha_indovinato!");
                 s.aggiornaParola();
                 broadcastClient("la_nuova_parola_e'_lunga"+s.getP().length());
             }
+            }
         }
         
-    } // EXIT
+    }
 
     private String read() {
         String line = "";
@@ -96,7 +101,6 @@ public class ClientHandler implements Runnable {
         } catch (IOException ex) {
             Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
     
     private void forwardToClient(String received){
@@ -105,7 +109,7 @@ public class ClientHandler implements Runnable {
         //String recipient = tokenizer.nextToken().trim();
         String message = tokenizer.nextToken().trim();
         
-        //for(ClientHandler c : ServerTCP.getClients()){
+//      for(ClientHandler c : ServerTCP.getClients()){
 //            if(c.isLoggedIn && c.name.equals(recipient)){
                 
 //                if(message.equals())
@@ -138,7 +142,6 @@ public class ClientHandler implements Runnable {
                 
 //            }
         }
-        
     }
     
     
@@ -156,6 +159,15 @@ public class ClientHandler implements Runnable {
     
     private String ControllaParola(String p,String msg){
         String indovinata="";
+        int lunghezzaParola=msg.length();
+        int differenza=0;
+        if(msg.length()<p.length()){
+            differenza=p.length()-msg.length();
+            for(int x=0;x<differenza;x++){
+                msg+="*";
+            }
+        }
+       
         for(int i=0;i<p.length();i++){
             if(p.charAt(i)==msg.charAt(i)){
                 indovinata+=msg.charAt(i);
