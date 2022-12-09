@@ -22,12 +22,12 @@ public class ServerTCP {
     /**
      * @param args the command line arguments
      */
-    Socket socket;
-    static int numOfUsers = 0;
-    static List<ClientHandler> clients;
-    ServerSocket serversocket;
-    public static String p="";
-    public static int num;
+    private Socket socket;
+    private static int numOfUsers = 0;
+    private static List<ClientHandler> clients;
+    private ServerSocket serversocket;
+    private static String p="";
+    private static int num;
 
     public ServerTCP() throws IOException {
         clients = new ArrayList<>();
@@ -71,6 +71,10 @@ public class ServerTCP {
         return clients;
     }
 
+    public void rimuoviClient(ClientHandler c) {
+        clients.remove(c);
+        numOfUsers--;
+    }
     
     private static String EstraiParola(){
         String path="src\\servertcp\\parole.txt";
@@ -100,4 +104,12 @@ public class ServerTCP {
 //        return tmp;
 //    }
     
+    public void aggiornaParola() {
+        p = EstraiParola();
+        System.out.println(p);
+    }
+    
+    public String getP() {
+        return p;
+    }
 }

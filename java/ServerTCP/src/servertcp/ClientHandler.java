@@ -26,13 +26,14 @@ import java.util.logging.Logger;
  */
 public class ClientHandler implements Runnable {
 
-    final Socket socket;
-    final Scanner scan;
-    String name;
-    boolean isLoggedIn;
+    private final Socket socket;
+    private final Scanner scan;
+    private String name;
+    private boolean isLoggedIn;
     private DataInputStream input;
     private DataOutputStream output;
-    ServerTCP s;
+    private ServerTCP s;
+    private String parolacontrollata="";
 
     public ClientHandler(Socket socket, String name, ServerTCP s) throws IOException {
         this.socket = socket;
@@ -44,24 +45,30 @@ public class ClientHandler implements Runnable {
         this.s=s;
         
     }
-    String parolacontrollata="";
+
     @Override
     public void run() {
         String ricevuti;
         write(output, "your name: " + name+"\n");
-        forwardToClient("la parola è lunga"+s.p.length());
+        forwardToClient("la_parola_e'_lunga"+s.getP().length());
         while (true) {
             ricevuti = read();
-            if(ControllaVinto(parolacontrollata,s.p)==false){
-                parolacontrollata=ControllaParola(s.p,ricevuti);
-                forwardToClient(parolacontrollata);
+            if(ricevuti.equals("EXIT")){
+                s.rimuoviClient(this);
+                forwardToClient("DISCONNECTED");
+                return;
             }
-            else{
-                 forwardToClient("bravo hai vinto");
+            parolacontrollata=ControllaParola(s.getP(),ricevuti);
+            forwardToClient(parolacontrollata);
+            //System.out.println("PAROLA CONTROLLATA = " + parolacontrollata);
+            if(ControllaVinto(parolacontrollata,s.getP())) {
+                broadcastClient(name + "_ha_indovinato!");
+                s.aggiornaParola();
+                broadcastClient("la_nuova_parola_e'_lunga"+s.getP().length());
             }
         }
         
-    }
+    } // EXIT
 
     private String read() {
         String line = "";
@@ -95,7 +102,28 @@ public class ClientHandler implements Runnable {
     private void forwardToClient(String received){
         //message
         StringTokenizer tokenizer = new StringTokenizer(received);
-//        String recipient = tokenizer.nextToken().trim();
+        //String recipient = tokenizer.nextToken().trim();
+        String message = tokenizer.nextToken().trim();
+        
+        //for(ClientHandler c : ServerTCP.getClients()){
+//            if(c.isLoggedIn && c.name.equals(recipient)){
+                
+//                if(message.equals())
+//                {
+                    write(this.output,message);
+                    log(name + " --> "+ message);
+                    //break;
+//                }
+                
+//            }
+        //}
+        
+    }
+    
+    private void broadcastClient(String received){
+        //message
+        StringTokenizer tokenizer = new StringTokenizer(received);
+        //String recipient = tokenizer.nextToken().trim();
         String message = tokenizer.nextToken().trim();
         
         for(ClientHandler c : ServerTCP.getClients()){
@@ -104,14 +132,15 @@ public class ClientHandler implements Runnable {
 //                if(message.equals())
 //                {
                     write(c.output,message);
-                    log(name + " --> "+ message);
-                    break;
+                    log(c.name + " --> "+ message);
+                    //break;
 //                }
                 
 //            }
         }
         
     }
+    
     
      private void write(DataOutputStream output , String message){
         try {
@@ -141,7 +170,7 @@ public class ClientHandler implements Runnable {
     
     public Boolean ControllaVinto(String indo,String p){
         boolean check=false;
-        if(indo==p){
+        if(indo.equals(p)){
             check=true;
             return check;
         }else{
