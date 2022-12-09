@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
-package clienttcp;
+package client;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  *
  * @author lettie
  */
-public class ClientTCP {
+public class Client {
 
     /**
      * @param args the command line arguments
@@ -33,7 +33,7 @@ public class ClientTCP {
     private DataOutputStream output = null;
     private InetAddress ip;
    
-    public ClientTCP() throws UnknownHostException, IOException{
+    public Client() throws UnknownHostException, IOException{
         ip = InetAddress.getByName("localhost");
         socket = new Socket (ip,1234);
         input = new DataInputStream(socket.getInputStream());
@@ -43,7 +43,7 @@ public class ClientTCP {
    
     public static void main(String[] args) throws IOException {
         // TODO code application logic here
-        ClientTCP client = new ClientTCP();
+        Client client = new Client();
         //thread 1->riceve i dati
         client.readMessageThread();
        
@@ -69,7 +69,7 @@ public class ClientTCP {
                             System.exit(0);
                         }
                     } catch (IOException ex) {
-                        Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                     }
                    
                    
@@ -90,17 +90,15 @@ public class ClientTCP {
                     try {
                         output.writeUTF(msg);
                     } catch (IOException ex) {
-                        Logger.getLogger(ClientTCP.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
         });
         sendmessage.start();
     }
-   
-   
+    
     private void log(String messaggio){
        System.out.println(messaggio);
     }
-
 }
