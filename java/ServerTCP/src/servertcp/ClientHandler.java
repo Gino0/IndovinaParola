@@ -42,36 +42,25 @@ public class ClientHandler implements Runnable {
         input = new DataInputStream(socket.getInputStream());
         output = new DataOutputStream(socket.getOutputStream());
         this.s=s;
+        
     }
-
+    String parolacontrollata="";
     @Override
     public void run() {
         String ricevuti;
         write(output, "your name: " + name+"\n");
+        forwardToClient("la parola è lunga"+s.p.length());
         while (true) {
             ricevuti = read();
-            if (ricevuti.equalsIgnoreCase("esci")) {
-                //se il server riceve la parola esci chiude la connessione
-                this.isLoggedIn = false;
-                closeSocket();
-                closeStream();
-                break;
+            if(ControllaVinto(parolacontrollata,s.p)==false){
+                parolacontrollata=ControllaParola(s.p,ricevuti);
+                forwardToClient(parolacontrollata);
             }
             else{
-                
-                ricevuti="la parola è lunga ";
-                forwardToClient(ricevuti);
-                //String indo = ControllaParola(p,ricevuti);
-//                
-//                if(ControllaVinto(indo,p)==true)
-//                {
-//                    ricevuti="hai vinto";
-//                    forwardToClient(ricevuti);
-//                }
+                 forwardToClient("bravo hai vinto");
             }
-            
-        }   
-        closeStream();
+        }
+        
     }
 
     private String read() {
@@ -136,8 +125,6 @@ public class ClientHandler implements Runnable {
         System.out.println(msg);
     }
     
-    
-    
     private String ControllaParola(String p,String msg){
         String indovinata="";
         for(int i=0;i<p.length();i++){
@@ -162,5 +149,4 @@ public class ClientHandler implements Runnable {
          return check;   
         }
     }
-    
 }

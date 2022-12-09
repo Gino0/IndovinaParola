@@ -27,6 +27,7 @@ public class ServerTCP {
     static List<ClientHandler> clients;
     ServerSocket serversocket;
     public static String p="";
+    public static int num;
 
     public ServerTCP() throws IOException {
         clients = new ArrayList<>();
@@ -38,8 +39,7 @@ public class ServerTCP {
         // faccio partire il server
         ServerTCP server = new ServerTCP();
         // aseptto le connessioni dei clients
-        server.waitConnection();
-       
+        server.waitConnection();      
     }
 
     private void waitConnection() throws IOException {
@@ -59,7 +59,7 @@ public class ServerTCP {
     }
 
     
-    private void log(String messaggio) {
+    private static void log(String messaggio) {
         System.out.println(messaggio);
     }
     
@@ -87,7 +87,7 @@ public class ServerTCP {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        int num=(int)(Math.random()*(nome.size()));
+        num=(int)(Math.random()*(nome.size()));
         return nome.get(num);
     }
 //    public String attivi(){
