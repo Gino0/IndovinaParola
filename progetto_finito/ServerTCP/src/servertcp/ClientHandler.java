@@ -50,7 +50,7 @@ public class ClientHandler implements Runnable {
     public void run() {
         String ricevuti;
         write(output, "your name: " + name+"\n");
-        broadcastClient("la_parola_e'_lunga_"+s.getP().length());
+        forwardToClient("la_parola_e'_lunga_"+s.getP().length());
         while (true) {
             ricevuti = read();
             if(ricevuti.equals("EXIT") || ricevuti.equals("exit")){
